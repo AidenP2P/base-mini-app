@@ -11,15 +11,21 @@ export default function DevDiagnostics() {
   const wcProjectId = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
   const okitApiKey = process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY || '';
 
+  type InjectedEthereumProvider = {
+    isMetaMask?: boolean;
+    isCoinbaseWallet?: boolean;
+    providers?: InjectedEthereumProvider[];
+  };
+
   const providers = useMemo(() => {
     if (typeof window === 'undefined') return [] as string[];
     const names: string[] = [];
-    const eth: any = (window as any).ethereum;
+    const eth = (window as Window & { ethereum?: InjectedEthereumProvider }).ethereum;
     if (eth) {
       if (eth.isMetaMask) names.push('MetaMask');
       if (eth.isCoinbaseWallet) names.push('Coinbase Wallet');
       if (eth.providers && Array.isArray(eth.providers)) {
-        for (const p of eth.providers) {
+        for (const p of eth.providers as InjectedEthereumProvider[]) {
           if (p.isMetaMask && !names.includes('MetaMask')) names.push('MetaMask');
           if (p.isCoinbaseWallet && !names.includes('Coinbase Wallet')) names.push('Coinbase Wallet');
         }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract, useChainId } from 'wagmi';
-import { isAddress, parseUnits } from 'viem';
+import { isAddress } from 'viem';
 import { ERC20_ABI, getUSDCAddress, formatUSDC, parseUSDC } from '@/config/contracts';
 
 export default function USDCTransfer() {
@@ -69,7 +69,7 @@ export default function USDCTransfer() {
         setError(`Insufficient balance. You have ${formatUSDC(balance as bigint)} USDC`);
         return false;
       }
-    } catch (err) {
+    } catch {
       setError('Invalid amount format');
       return false;
     }
@@ -99,8 +99,9 @@ export default function USDCTransfer() {
         args: [recipient as `0x${string}`, amountInWei],
       });
       
-    } catch (err: any) {
-      setError(err.message || 'Transaction failed');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Transaction failed';
+      setError(message);
       setIsLoading(false);
     }
   };
