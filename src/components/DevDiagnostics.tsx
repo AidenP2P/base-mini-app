@@ -31,6 +31,8 @@ export default function DevDiagnostics() {
 
   const okitOk = okitApiKey && okitApiKey.trim().length >= 10;
   const wcOk = wcProjectId && wcProjectId.trim().length >= 16;
+  const host = typeof window !== 'undefined' ? window.location.host : '';
+  const isLocalhost = host.startsWith('localhost') || host.startsWith('127.0.0.1');
 
   const mask = (v: string, keep = 4) => (v ? `${v.slice(0, keep)}…${v.slice(-keep)}` : '');
 
@@ -52,6 +54,10 @@ export default function DevDiagnostics() {
               {wcOk ? `OK (${mask(wcProjectId)})` : 'Missing or invalid'}
             </div>
             <div>
+              <span className="font-medium">Location Host:</span>{' '}
+              {host || 'n/a'} {(!isLocalhost) && ' (not localhost — ensure this host is allowlisted in CDP)'}
+            </div>
+            <div>
               <span className="font-medium">Connectors:</span>{' '}
               {connectors && connectors.length > 0 ? connectors.map((c) => c.name).join(', ') : 'None detected'}
             </div>
@@ -71,4 +77,3 @@ export default function DevDiagnostics() {
     </div>
   );
 }
-
