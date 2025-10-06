@@ -3,12 +3,15 @@
 import { ConnectWallet, Wallet, WalletDropdown, WalletDropdownLink, WalletDropdownDisconnect } from '@coinbase/onchainkit/wallet';
 import { Address, Avatar, Name, Identity, EthBalance } from '@coinbase/onchainkit/identity';
 import { useAccount } from 'wagmi';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import DevDiagnostics from '@/components/DevDiagnostics';
 
 export default function WalletConnect() {
   const { address, isConnected, chain } = useAccount();
 
   return (
     <div className="flex flex-col items-center gap-4 p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+      <DevDiagnostics />
       <h2 className="text-2xl font-bold text-gray-800">
         Base Mini App - USDC DeFi
       </h2>
@@ -19,24 +22,13 @@ export default function WalletConnect() {
             <p className="text-gray-600 mb-4">
               Connect your wallet to interact with USDC on Base
             </p>
-            <Wallet>
-              <ConnectWallet>
-                <Avatar className="h-6 w-6" />
-                <Name />
-              </ConnectWallet>
-              <WalletDropdown>
-                <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-                  <Avatar />
-                  <Name />
-                  <Address />
-                  <EthBalance />
-                </Identity>
-                <WalletDropdownLink icon="wallet" href="https://wallet.coinbase.com/">
-                  Wallet
-                </WalletDropdownLink>
-                <WalletDropdownDisconnect />
-              </WalletDropdown>
-            </Wallet>
+            {/* Fallback to RainbowKit Connect in case OnchainKit button is blocked */}
+            <div className="inline-flex items-center justify-center">
+              <ConnectButton showBalance={false} chainStatus="icon" />
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              If the button above does not respond, try refreshing or disabling blockers.
+            </p>
           </div>
         ) : (
           <div className="text-center">

@@ -9,7 +9,14 @@ const nextConfig: NextConfig = {
       tls: false,
       crypto: false,
     };
-    
+    // Stub React Native async storage required by MetaMask SDK in web builds
+    // This avoids bundling RN-only package '@react-native-async-storage/async-storage'
+    // which causes "Module not found" in browser/Next.js environments.
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      ['@react-native-async-storage/async-storage']: false,
+    };
+
     // Enable external modules for better compatibility
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
     
